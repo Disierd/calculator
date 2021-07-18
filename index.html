@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<header>
+    <link rel="stylesheet" href="myStyles.css">
+</header>
+<body>
+    <h1 class="title">Simple Calculator</h1>
+    <div id=calculator>
+        <div id="grid-container">
+            <div id="input-field">Blah</div>
+            <button class="grid-cell number" id="1">1</button>
+            <button class="grid-cell number" id="2">2</button>
+            <button class="grid-cell number" id="3">3</button>
+            <button class="grid-cell operator" id="plus">+</button>
+            <button class="grid-cell number" id="4">4</button>
+            <button class="grid-cell number" id="5">5</button>
+            <button class="grid-cell number" id="6">6</button>
+            <button class="grid-cell operator" id="minus">-</button>
+            <button class="grid-cell number" id="7">7</button>
+            <button class="grid-cell number" id="8">8</button>
+            <button class="grid-cell number" id="9">9</button>
+            <button class="grid-cell operator" id="multiply">x</button>
+            <button class="grid-cell number" id="zero">0</button>
+            <button class="grid-cell operator" id="divide">÷</button>
+            <button class="grid-cell operator" id="clear">AC</button>
+            <button class="grid-cell operator" id="equal">=</button>
+        </div>
+    </div>
+</body>
+
+<script>
+    const buttons = document.querySelectorAll("number");
+    buttons.forEach(button => addEventListener("click", calculate));
+
+    let input = {
+        firstNum: "",
+        operator: "",
+        lastNum: "",
+    };
+
+    function calculate(e){
+
+        storeInput(e.target.textContent);
+        
+    }
+
+    function storeInput(userInput){
+        
+        if(!operator) 
+        
+    }
+
+</script>
+
+</html>
