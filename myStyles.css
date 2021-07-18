@@ -17,16 +17,16 @@
     'clear clear clear .';
 }
 
-#input-field {
+#display {
     grid-area: input;
     height: 80px;
 }
 
-#zero {
+.zero {
     grid-area: zero;
 }
 
 
-#clear {
+.clear {
     grid-area: clear;
 }

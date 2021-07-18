@@ -7,48 +7,126 @@
     <h1 class="title">Simple Calculator</h1>
     <div id=calculator>
         <div id="grid-container">
-            <div id="input-field">Blah</div>
-            <button class="grid-cell number" id="1">1</button>
-            <button class="grid-cell number" id="2">2</button>
-            <button class="grid-cell number" id="3">3</button>
-            <button class="grid-cell operator" id="plus">+</button>
-            <button class="grid-cell number" id="4">4</button>
-            <button class="grid-cell number" id="5">5</button>
-            <button class="grid-cell number" id="6">6</button>
-            <button class="grid-cell operator" id="minus">-</button>
-            <button class="grid-cell number" id="7">7</button>
-            <button class="grid-cell number" id="8">8</button>
-            <button class="grid-cell number" id="9">9</button>
-            <button class="grid-cell operator" id="multiply">x</button>
-            <button class="grid-cell number" id="zero">0</button>
-            <button class="grid-cell operator" id="divide">÷</button>
-            <button class="grid-cell operator" id="clear">AC</button>
-            <button class="grid-cell operator" id="equal">=</button>
+            <div id="display">
+            </div>
+            <button data-type="num" class="grid-cell" id="1">1</button>
+            <button data-type="num" class="grid-cell" id="2">2</button>
+            <button data-type="num" class="grid-cell" id="3">3</button>
+            <button data-type="oper" class="grid-cell" id="+">+</button>
+            <button data-type="num" class="grid-cell" id="4">4</button>
+            <button data-type="num" class="grid-cell" id="5">5</button>
+            <button data-type="num" class="grid-cell" id="6">6</button>
+            <button data-type="oper" class="grid-cell" id="-">-</button>
+            <button data-type="num" class="grid-cell" id="7">7</button>
+            <button data-type="num" class="grid-cell" id="8">8</button>
+            <button data-type="num" class="grid-cell" id="9">9</button>
+            <button data-type="oper" class="grid-cell" id="*">x</button>
+            <button data-type="num" class="grid-cell zero" id="0">0</button>
+            <button data-type="oper" class="grid-cell" id="÷">÷</button>
+            <button data-type="clear" class="grid-cell clear" id="AC">AC</button>
+            <button data-type="equal" class="grid-cell" id="=">=</button>
         </div>
     </div>
 </body>
 
 <script>
-    const buttons = document.querySelectorAll("number");
-    buttons.forEach(button => addEventListener("click", calculate));
+    const buttons = document.querySelectorAll("button");
+    buttons.forEach(button => addEventListener("click", operate));
+    const display = document.querySelector("#display")
 
-    let input = {
+    let inputObj = {
         firstNum: "",
         operator: "",
         lastNum: "",
     };
 
-    function calculate(e){
-
-        storeInput(e.target.textContent);
-        
+    function operate(e){
+        switch(e.target.getAttribute("data-type")) {
+            case "num":
+                numInput(e.target.getAttribute("id"));
+                break;
+            case "oper":
+                operInput(e.target.getAttribute("id"));
+                break;
+            case "equal":
+                calculate(e.target.getAttribute("id"));
+                break;
+            default:
+                clear();
+        } 
+        updateField();
     }
 
-    function storeInput(userInput){
+    function numInput(userInput){
         
-        if(!operator) 
-        
+        if(!inputObj.operator) inputObj.firstNum += userInput;
+        else inputObj.lastNum += userInput;
     }
+
+    function operInput(userInput){
+        if(!inputObj.operator && !inputObj.firstNum){
+            inputObj.firstNum = "0";
+            inputObj.operator = userInput;
+        } else if(!inputObj.lastNum){
+            inputObj.operator = userInput;
+        } else if(inputObj.operator && inputObj.lastNum){
+            calculate(userInput);
+        }
+    }
+
+    function calculate(userInput){
+        switch(inputObj.operator){
+            case "÷":
+                divide();
+                break;
+            case "*":
+                multiply();
+                break;
+            case "-":
+                subtract();
+                break;
+            case "+":
+                add();
+                break;
+            default:
+                console.log("error, could not read operator");
+        }
+        inputObj.lastNum = "";
+
+        if (userInput !== "=") inputObj.operator = userInput;
+        else inputObj.operator = "";
+    }
+
+    function clear(){
+        inputObj.firstNum = "";
+        inputObj.operator = "";
+        inputObj.lastNum = "";
+    }
+
+    function updateField(){
+        display.textContent = inputObj.firstNum + inputObj.operator + inputObj.lastNum;
+    }
+
+    function multiply(){
+        inputObj.firstNum = inputObj.firstNum * inputObj.lastNum;
+    }
+    function divide(){
+        if (inputObj.firstNum == 0 && inputObj.lastNum == 0){
+            clear();
+            inputObj.firstNum = "Nice try. Clear the screen and try something else.";
+            updateField();
+
+        } else {
+            inputObj.firstNum = inputObj.firstNum / inputObj.lastNum;
+        }
+    }
+    function subtract(){
+        inputObj.firstNum = inputObj.firstNum - inputObj.lastNum;
+    }
+    function add(){
+        inputObj.firstNum = +inputObj.firstNum + +inputObj.lastNum;
+    }
+
 
 </script>
 
