@@ -7,8 +7,8 @@
     <h1 class="title">Simple Calculator</h1>
     <div id=calculator>
         <div id="grid-container">
-            <div id="display">
-            </div>
+            <div id="display" class="grid-cell">0</div>
+            <!-- <div id="displayStore" class="grid-cell">0</div> -->
             <button data-type="num" class="grid-cell" id="1">1</button>
             <button data-type="num" class="grid-cell" id="2">2</button>
             <button data-type="num" class="grid-cell" id="3">3</button>
@@ -20,8 +20,9 @@
             <button data-type="num" class="grid-cell" id="7">7</button>
             <button data-type="num" class="grid-cell" id="8">8</button>
             <button data-type="num" class="grid-cell" id="9">9</button>
-            <button data-type="oper" class="grid-cell" id="*">x</button>
+            <button data-type="oper" class="grid-cell" id="x">x</button>
             <button data-type="num" class="grid-cell zero" id="0">0</button>
+            <button data-type="num" class="grid-cell" id=".">.</button>
             <button data-type="oper" class="grid-cell" id="÷">÷</button>
             <button data-type="clear" class="grid-cell clear" id="AC">AC</button>
             <button data-type="equal" class="grid-cell" id="=">=</button>
@@ -31,7 +32,7 @@
 
 <script>
     const buttons = document.querySelectorAll("button");
-    buttons.forEach(button => addEventListener("click", operate));
+    buttons.forEach(button => addEventListener("click", takeInput));
     const display = document.querySelector("#display")
 
     let inputObj = {
@@ -40,37 +41,50 @@
         lastNum: "",
     };
 
-    function operate(e){
+    let inputPos = "firstNum";
+
+    function takeInput(e){
         switch(e.target.getAttribute("data-type")) {
             case "num":
-                numInput(e.target.getAttribute("id"));
+                if (display.textContent.length < 25) storeNum(e.target.getAttribute("id"));
+                updateDisplay();
                 break;
             case "oper":
-                operInput(e.target.getAttribute("id"));
+                storeOper(e.target.getAttribute("id"));
+                updateDisplay();
                 break;
             case "equal":
                 calculate(e.target.getAttribute("id"));
+                updateDisplay();
                 break;
+            case "clear":
+                clearDisplay();
             default:
-                clear();
+                return;
         } 
-        updateField();
     }
 
-    function numInput(userInput){
-        
-        if(!inputObj.operator) inputObj.firstNum += userInput;
-        else inputObj.lastNum += userInput;
+    function storeNum(numInput){
+
+        if (inputPos === "lastNum" && !inputObj.operator){ // Checks if current display is from a previous calculation & clears it if no operator has been entered
+            clearDisplay();
+        }
+        if ( (numInput !== ".") || (!inputObj[inputPos].includes(".")) ){ // stops user from inputting multiple periods in one number
+            inputObj[inputPos] += numInput; // inputs number
+        }
     }
 
-    function operInput(userInput){
+    function storeOper(operInput){
+
+        inputPos = "lastNum";
+
         if(!inputObj.operator && !inputObj.firstNum){
             inputObj.firstNum = "0";
-            inputObj.operator = userInput;
+            inputObj.operator = operInput;
         } else if(!inputObj.lastNum){
-            inputObj.operator = userInput;
+            inputObj.operator = operInput;
         } else if(inputObj.operator && inputObj.lastNum){
-            calculate(userInput);
+            calculate(operInput);
         }
     }
 
@@ -79,7 +93,7 @@
             case "÷":
                 divide();
                 break;
-            case "*":
+            case "x":
                 multiply();
                 break;
             case "-":
@@ -89,7 +103,7 @@
                 add();
                 break;
             default:
-                console.log("error, could not read operator");
+                return;
         }
         inputObj.lastNum = "";
 
@@ -97,34 +111,37 @@
         else inputObj.operator = "";
     }
 
-    function clear(){
+    function clearDisplay(){
         inputObj.firstNum = "";
         inputObj.operator = "";
         inputObj.lastNum = "";
+        inputPos = "firstNum";
+        display.textContent = "0";
     }
 
-    function updateField(){
+    function updateDisplay(){
+
         display.textContent = inputObj.firstNum + inputObj.operator + inputObj.lastNum;
     }
 
     function multiply(){
-        inputObj.firstNum = inputObj.firstNum * inputObj.lastNum;
+        inputObj.firstNum = +(inputObj.firstNum * inputObj.lastNum).toFixed(6);
     }
     function divide(){
         if (inputObj.firstNum == 0 && inputObj.lastNum == 0){
-            clear();
-            inputObj.firstNum = "Nice try. Clear the screen and try something else.";
-            updateField();
+            clearDisplay();
+            inputObj.firstNum = "Nice try.";
+            updateDisplay();
 
         } else {
-            inputObj.firstNum = inputObj.firstNum / inputObj.lastNum;
+            inputObj.firstNum = +(inputObj.firstNum / inputObj.lastNum).toFixed(6);
         }
     }
     function subtract(){
-        inputObj.firstNum = inputObj.firstNum - inputObj.lastNum;
+        inputObj.firstNum = +(inputObj.firstNum - inputObj.lastNum).toFixed(6);
     }
     function add(){
-        inputObj.firstNum = +inputObj.firstNum + +inputObj.lastNum;
+        inputObj.firstNum = +(+inputObj.firstNum + +inputObj.lastNum).toFixed(6);
     }
 
 
